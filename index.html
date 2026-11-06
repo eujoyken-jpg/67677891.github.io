@@ -1,0 +1,717 @@
+<title>梅花易數</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<style>
+/* Layout: one reading column. Hero with a plum branch, a three-step casting card, a result card with three hexagrams, then a primer for first-time readers. */
+:root{
+  --bg:#f4f5f8;
+  --surface:#ffffff;
+  --surface2:#eceef4;
+  --fg:#1d2230;
+  --muted:#586074;
+  --line:#d8dce7;
+  --plum:#a3345f;
+  --plum-ink:#ffffff;
+  --plum-soft:#f6e4ec;
+  --bamboo:#3e6b5c;
+  --good:#2b744d;
+  --warn:#9a5a12;
+  --bad:#b0352d;
+  --font-display:"LXGW WenKai TC","Noto Serif TC","PMingLiU",serif;
+  --font-body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#13151d;--surface:#1b1e29;--surface2:#242838;--fg:#ebe9f1;--muted:#a0a6ba;--line:#2f3447;
+    --plum:#ea7fa5;--plum-ink:#1a0d13;--plum-soft:#35202c;--bamboo:#86bba8;--good:#6fc597;--warn:#e0a45c;--bad:#ef8b83;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#13151d;--surface:#1b1e29;--surface2:#242838;--fg:#ebe9f1;--muted:#a0a6ba;--line:#2f3447;
+  --plum:#ea7fa5;--plum-ink:#1a0d13;--plum-soft:#35202c;--bamboo:#86bba8;--good:#6fc597;--warn:#e0a45c;--bad:#ef8b83;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background:var(--bg);color:var(--fg);
+  font-family:var(--font-body);font-size:16px;line-height:1.75;
+  padding-block:24px 56px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+}
+.wrap{max-width:880px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+h1,h2,h3{font-family:var(--font-display);font-weight:700;line-height:1.3;text-wrap:balance;margin:0}
+p{margin:0}
+a{color:var(--plum)}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--plum);outline-offset:2px}
+
+/* hero */
+.hero{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:center;padding-top:8px}
+.hero h1{font-size:clamp(2.4rem,9vw,3.6rem);letter-spacing:.08em}
+.hero .sub{font-family:var(--font-display);font-size:1.15rem;color:var(--plum);margin-top:4px}
+.hero .lede{color:var(--muted);margin-top:12px;max-width:34em}
+.branch{width:150px;height:auto;max-width:100%}
+.branch .stem{stroke:var(--muted);fill:none;stroke-width:2.2;stroke-linecap:round}
+.branch .fl{fill:var(--plum)}
+.branch .fc{fill:var(--plum-ink);opacity:.9}
+@media (max-width:520px){.hero{grid-template-columns:1fr}.branch{width:120px;order:-1}}
+
+.nav{display:flex;flex-wrap:wrap;gap:8px}
+.nav a{padding:6px 14px;border:1px solid var(--line);border-radius:999px;text-decoration:none;color:var(--fg);background:var(--surface);font-size:.95rem}
+.nav a:hover{border-color:var(--plum);color:var(--plum)}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:clamp(16px,4vw,28px);display:flex;flex-direction:column;gap:20px;min-width:0}
+.card h2{font-size:1.5rem}
+.lead{color:var(--muted)}
+
+/* steps */
+.step{display:flex;flex-direction:column;gap:10px;min-width:0}
+.steph{display:flex;align-items:center;gap:10px;font-weight:700}
+.steph b{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--plum);color:var(--plum-ink);font-family:var(--font-display);font-size:.95rem;flex:none}
+textarea,select,input[type=number]{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-width:0}
+textarea{resize:vertical;min-height:72px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:var(--surface2);border-radius:999px;padding:5px 12px;font-size:.9rem;cursor:pointer}
+.chip:hover{border-color:var(--plum)}
+.hint{color:var(--muted);font-size:.92rem}
+.seg{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.seg button{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:10px 12px;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:2px}
+.seg button span{font-size:.85rem;color:var(--muted)}
+.seg button[aria-pressed="true"]{border-color:var(--plum);background:var(--plum-soft);box-shadow:inset 0 0 0 1px var(--plum)}
+.seg button[aria-pressed="true"] strong{color:var(--plum)}
+.panel{background:var(--bg);border:1px dashed var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.field label{font-size:.9rem;color:var(--muted)}
+.row3{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+.fact{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 12px;min-width:0}
+.fact small{display:block;color:var(--muted);font-size:.8rem}
+.fact strong{font-family:var(--font-display);font-size:1.1rem;font-variant-numeric:tabular-nums}
+.calc{font-variant-numeric:tabular-nums;font-size:.95rem;color:var(--muted);overflow-wrap:anywhere}
+.calc b{color:var(--fg)}
+.btn{border:0;background:var(--plum);color:var(--plum-ink);border-radius:10px;padding:12px 22px;font-weight:700;cursor:pointer;align-self:flex-start}
+.btn:hover{filter:brightness(1.07)}
+.btn.ghost{background:transparent;color:var(--fg);border:1px solid var(--line);padding:8px 14px;font-weight:500}
+.btn.ghost:hover{border-color:var(--plum);color:var(--plum)}
+.btn.small{padding:8px 14px;font-size:.92rem}
+.msg{min-height:1.4em;font-size:.92rem;color:var(--bad)}
+
+/* result */
+.empty{color:var(--muted);display:flex;flex-direction:column;gap:6px}
+.empty ul{margin:6px 0 0;padding-left:1.2em}
+.qline{font-family:var(--font-display);font-size:1.2rem}
+.meta{color:var(--muted);font-size:.9rem}
+.verdict{border-radius:12px;padding:14px 16px;background:var(--plum-soft);display:flex;flex-direction:column;gap:4px}
+.verdict h3{font-size:1.25rem;color:var(--plum)}
+.trio{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.gua{border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px;align-items:flex-start;min-width:0}
+.gua .tag{font-size:.8rem;color:var(--muted);letter-spacing:.1em}
+.gua h3{font-size:1.25rem}
+.gua .kw{color:var(--muted);font-size:.92rem}
+.hexwrap{padding-right:30px}
+.hex{display:flex;flex-direction:column;gap:6px;width:110px}
+.hex.mini{width:42px;gap:3px}
+.ln{height:10px;display:flex;gap:10px;position:relative}
+.hex.mini .ln{height:5px;gap:5px}
+.ln i{display:block;flex:1;background:var(--fg);border-radius:2px}
+.ln.yin i{flex:0 0 calc(50% - 5px)}
+.hex.mini .ln.yin i{flex:0 0 calc(50% - 2.5px)}
+.ln.mv i{background:var(--plum)}
+.ln.mv::after{content:"動";position:absolute;right:-28px;top:50%;transform:translateY(-50%);font-size:.75rem;line-height:1;color:var(--plum);font-weight:700}
+.sect{display:flex;flex-direction:column;gap:6px}
+.sect h3{font-size:1.1rem}
+.rel{display:inline-block;padding:1px 10px;border-radius:999px;font-size:.85rem;font-weight:700;border:1px solid currentColor}
+.rel.good{color:var(--good)}.rel.mid{color:var(--warn)}.rel.bad{color:var(--bad)}
+.actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.again{display:flex;flex-wrap:wrap;gap:8px}
+.again input{flex:1 1 220px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 12px;min-width:0}
+.copybox{width:100%;min-height:120px;font-size:.9rem}
+
+/* history */
+.hist{display:flex;flex-direction:column;gap:8px;list-style:none;margin:0;padding:0}
+.hist li{display:flex;gap:8px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:8px 10px;min-width:0}
+.hist .open{flex:1;min-width:0;text-align:left;background:none;border:0;cursor:pointer;display:flex;flex-direction:column;padding:2px}
+.hist .open:hover strong{color:var(--plum)}
+.hist .open strong{overflow-wrap:anywhere}
+.hist .open span{font-size:.85rem;color:var(--muted)}
+.hist .del{background:none;border:0;color:var(--muted);cursor:pointer;padding:6px 8px;border-radius:8px}
+.hist .del:hover{color:var(--bad)}
+
+/* primer */
+.primer{display:flex;flex-direction:column;gap:28px}
+.primer section{display:flex;flex-direction:column;gap:10px;min-width:0}
+.primer h3{font-size:1.2rem}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.mini-card{border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.mini-card b{font-family:var(--font-display);font-size:1.1rem;color:var(--plum)}
+.steps{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px}
+.formula{background:var(--bg);border-left:3px solid var(--plum);border-radius:0 10px 10px 0;padding:10px 14px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:480px;font-size:.93rem}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:middle}
+th{color:var(--muted);font-weight:500;font-size:.85rem}
+td.num{font-variant-numeric:tabular-nums}
+.tbl.narrow table{min-width:360px}
+details{border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+details+details{margin-top:8px}
+summary{cursor:pointer;font-weight:700}
+details p{margin-top:6px;color:var(--muted)}
+ul.plain{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:4px}
+.note{background:var(--surface2);border-radius:12px;padding:12px 16px;color:var(--muted);font-size:.93rem}
+footer{color:var(--muted);font-size:.85rem;text-align:center}
+@media (prefers-reduced-motion:no-preference){.btn{transition:filter .15s}}
+</style>
+
+<div class="wrap">
+
+<header class="hero">
+  <div>
+    <h1>梅花易數</h1>
+    <p class="sub">以數起卦，以卦觀變</p>
+    <p class="lede">寫下一個想問的問題，用現在的時間或三個數字起卦，看本卦、互卦、變卦與體用，再用白話讀出參考方向。不需要先懂易經。</p>
+  </div>
+  <svg class="branch" viewBox="0 0 150 130" role="img" aria-label="梅花枝">
+    <path class="stem" d="M6 124 C 38 96, 54 90, 76 66 S 112 30, 142 14"/>
+    <path class="stem" d="M54 90 C 60 70, 70 62, 80 58"/>
+    <path class="stem" d="M96 46 C 100 62, 112 70, 126 70"/>
+    <g>
+      <circle class="fl" cx="40" cy="98" r="9"/><circle class="fc" cx="40" cy="98" r="2.5"/>
+      <circle class="fl" cx="82" cy="54" r="10"/><circle class="fc" cx="82" cy="54" r="2.8"/>
+      <circle class="fl" cx="128" cy="70" r="8"/><circle class="fc" cx="128" cy="70" r="2.3"/>
+      <circle class="fl" cx="118" cy="28" r="9"/><circle class="fc" cx="118" cy="28" r="2.5"/>
+      <circle class="fl" cx="68" cy="82" r="6"/><circle class="fc" cx="68" cy="82" r="1.8"/>
+    </g>
+  </svg>
+</header>
+
+<nav class="nav" aria-label="頁面導覽">
+  <a href="#cast">起卦</a>
+  <a href="#learn">認識梅花易數</a>
+  <a href="#history">近期占問</a>
+</nav>
+
+<p class="note" id="jsWarn"><b>目前無法執行網頁程式。</b>起卦、時區與紀錄都無法使用。如果你是從檔案管理員、LINE 或預覽畫面開啟，請改用 Safari、Chrome 等瀏覽器，或使用網址連結開啟。</p>
+
+<section class="card" id="cast">
+  <div>
+    <h2>線上起卦</h2>
+    <p class="lead">依序完成三步，最後按「開始起卦」。時間會依你選的地區自動換成農曆與時辰。</p>
+  </div>
+
+  <div class="step">
+    <label class="steph" for="q"><b>一</b>你想問什麼？</label>
+    <textarea id="q" rows="2" maxlength="120" placeholder="例如：這個月底的面試，我該怎麼準備？"></textarea>
+    <p class="hint">愈具體愈好。不知道怎麼寫，就點下面一句再改成自己的情況。</p>
+    <div class="chips" id="chips">
+      <button type="button" class="chip">我這次考試能否順利發揮？</button>
+      <button type="button" class="chip">這份工作適合繼續做下去嗎？</button>
+      <button type="button" class="chip">這段關係現在該怎麼走？</button>
+      <button type="button" class="chip">眼前這個選擇，該進還是該等？</button>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="steph"><b>二</b>數字從哪裡來？</div>
+    <div class="seg" role="group" aria-label="取數方式" id="seg">
+      <button type="button" data-mode="time" aria-pressed="true"><strong>用此刻時間</strong><span>新手建議，自動換算農曆與時辰</span></button>
+      <button type="button" data-mode="heart" aria-pressed="false"><strong>心想取數</strong><span>心裡想著問題，按一下取三個數</span></button>
+      <button type="button" data-mode="manual" aria-pressed="false"><strong>自己填數字</strong><span>看到、想到、聽到的任何正整數</span></button>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="steph"><b>三</b>這次用的三個數</div>
+
+    <div class="panel" id="panelTime">
+      <div class="field">
+        <label for="tz">所在地區（時區不同，農曆日期與時辰可能不同，起出的卦也會不同）</label>
+        <select id="tz"><option value="本機">此裝置的時區</option><option value="Asia/Taipei">台灣</option><option value="Asia/Tokyo">日本東京</option><option value="America/New_York">美國紐約</option></select>
+      </div>
+      <div class="facts" id="facts"></div>
+      <p class="calc" id="calc"></p>
+      <div><button type="button" class="btn ghost small" id="refresh">重新取此刻</button></div>
+      <details id="cmp" open>
+        <summary>各地此刻的卦（看時區怎麼影響）</summary>
+        <div class="tbl"><table id="cmpTable"></table></div>
+        <p><b>以你選的地區為準，和其他地區比較：</b></p>
+        <ul class="plain" id="cmpWhy"></ul>
+        <p class="hint">台灣與東京只差一小時，有時落在同一個時辰、卦相同，有時跨到下一個時辰、卦就不同。紐約相差十三小時，日期與時辰通常都不同。</p>
+        <p class="note" id="cmpWhy"></p>
+      </details>
+    </div>
+
+    <div class="panel" id="panelHeart" hidden>
+      <p class="hint">安靜下來，心裡想著剛才寫的問題，然後按下按鈕。</p>
+      <div class="facts" id="heartFacts"></div>
+      <div><button type="button" class="btn ghost small" id="heartBtn">取三個數</button></div>
+    </div>
+
+    <div class="panel" id="panelManual" hidden>
+      <div class="row3">
+        <div class="field"><label for="n1">第一個數（定上卦）</label><input id="n1" type="number" min="1" step="1" inputmode="numeric" value="3"></div>
+        <div class="field"><label for="n2">第二個數（定下卦）</label><input id="n2" type="number" min="1" step="1" inputmode="numeric" value="8"></div>
+        <div class="field"><label for="n3">第三個數（定動爻）</label><input id="n3" type="number" min="1" step="1" inputmode="numeric" value="15"></div>
+      </div>
+      <p class="hint">以上是範例數字，可以直接改。只填一個數也可以，把它填在前兩格即可。</p>
+    </div>
+  </div>
+
+  <button type="button" class="btn" id="go">開始起卦</button>
+  <p class="msg" id="msg" role="status" aria-live="polite"></p>
+</section>
+
+<section class="card" id="result" aria-live="polite">
+  <h2>卦象與解讀</h2>
+  <div id="resultBody" class="empty">
+    <p>按下「開始起卦」後，結果會出現在這裡：</p>
+    <ul>
+      <li>本卦、互卦、變卦三個卦象，以及動爻的位置</li>
+      <li>體與用的五行關係</li>
+      <li>用白話整理的現況、過程與結果</li>
+    </ul>
+  </div>
+</section>
+
+<section class="card" id="history">
+  <h2>近期占問</h2>
+  <p class="lead">紀錄只存在這個瀏覽器裡，不會上傳。同一卦接著問的問題會收在同一筆。</p>
+  <ul class="hist" id="histList"></ul>
+  <div><button type="button" class="btn ghost small" id="histClear" hidden>清空全部紀錄</button></div>
+</section>
+
+<section class="card primer" id="learn">
+  <div>
+    <h2>認識梅花易數</h2>
+    <p class="lead">第一次接觸的話，先讀這一段，再回頭起卦會更有感覺。</p>
+  </div>
+
+  <section>
+    <h3>它是什麼</h3>
+    <p>梅花易數是以「數」和「象」為核心的易學占法，相傳為北宋學者邵雍（邵康節）所創。它不用銅錢或蓍草，而是取當下的年月日時，或是你看到、聽到、想到的數字，換成八卦，排出一個卦，再從卦象的變化讀出事情的狀態。</p>
+    <p>名稱的由來有一個流行的故事：邵雍在梅樹旁看見兩隻麻雀爭枝而墜地，就以此刻的情景起卦，推斷出事情的發展，後人因此稱這套方法為「梅花易數」。這個故事出自民間流傳，史料上難以確認，可以當作文化故事來讀。</p>
+  </section>
+
+  <section>
+    <h3>四個關鍵詞</h3>
+    <div class="cols">
+      <div class="mini-card"><b>數</b><p>把時間或數字，除以 8 或 6 取餘數，變成卦與動爻。</p></div>
+      <div class="mini-card"><b>象</b><p>每個卦都有自然物象與意義，例如天、澤、火、雷、風、水、山、地。</p></div>
+      <div class="mini-card"><b>變</b><p>動爻一變，本卦變成變卦，代表事情接下來的走向。</p></div>
+      <div class="mini-card"><b>體用</b><p>把卦分成「自己」與「事情」兩側，再看五行的生剋。</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h3>一個結果怎麼讀</h3>
+    <div class="cols">
+      <div class="mini-card"><b>本卦</b><p>事情現在的狀態與起點。</p></div>
+      <div class="mini-card"><b>互卦</b><p>從本卦中間四爻取出，代表過程裡暗藏的變化。</p></div>
+      <div class="mini-card"><b>變卦</b><p>動爻改變之後的卦，代表後來的結果。</p></div>
+    </div>
+    <p><b>動爻</b>是變化發生的位置，從下往上數，共有六個位置：初爻是起頭，二爻是漸入軌道，三爻是轉折，四爻接近定案，五爻最顯眼，上爻已到尾聲。</p>
+  </section>
+
+  <section>
+    <h3>時間起卦的算法</h3>
+    <p>先把時間換成農曆，再把地支換成數字（子 1、丑 2、寅 3……亥 12）：</p>
+    <div class="formula">
+      上卦：（年支數＋農曆月＋農曆日）÷ 8 的餘數<br>
+      下卦：（年支數＋農曆月＋農曆日＋時辰數）÷ 8 的餘數<br>
+      動爻：（年支數＋農曆月＋農曆日＋時辰數）÷ 6 的餘數
+    </div>
+    <p>餘數對應八卦：1 乾、2 兌、3 離、4 震、5 巽、6 坎、7 艮、8 坤。整除時，餘數當作 8（動爻則當作 6）。</p>
+    <p><b>為什麼時區會影響結果？</b>同一個瞬間，台北和東京的時鐘差一小時，時辰就可能跨到下一個，有時連農曆日期也不同。例如 2026 年 11 月 6 日同一瞬間，台北是 10:59（巳時），東京是 11:59（午時）。農曆都是九月二十八，但時辰數一個是 6、一個是 7：</p>
+    <div class="tbl narrow"><table>
+      <thead><tr><th>地區</th><th>算式</th><th>本卦</th><th>動爻</th></tr></thead>
+      <tbody>
+        <tr><td>台北</td><td class="num">7＋9＋28＝44，再加 6＝50</td><td>上震下兌，雷澤歸妹</td><td class="num">第 2 爻</td></tr>
+        <tr><td>東京</td><td class="num">7＋9＋28＝44，再加 7＝51</td><td>上震下離，雷火豐</td><td class="num">第 3 爻</td></tr>
+      </tbody>
+    </table></div>
+    <p>所以上方的起卦區要先選地區，系統才會用你所在地的時間來算。</p>
+  </section>
+
+  <section>
+    <h3>八卦對照表</h3>
+    <div class="tbl"><table id="triTable"></table></div>
+  </section>
+
+  <section>
+    <h3>十二時辰對照表</h3>
+    <div class="tbl narrow"><table id="brTable"></table></div>
+    <p class="hint">子時從前一天晚上 11 點開始。本頁 23:00 之後仍使用當天的農曆日期。</p>
+  </section>
+
+  <section>
+    <h3>體與用，五行生剋</h3>
+    <p>動爻所在的那一側叫「用」，代表事情、對方或外在的變化。另一側叫「體」，代表你自己或你這邊。看兩者的五行關係（木生火、火生土、土生金、金生水、水生木；木剋土、土剋水、水剋火、火剋金、金剋木）：</p>
+    <div class="tbl narrow"><table>
+      <thead><tr><th>關係</th><th>白話意思</th><th>傾向</th></tr></thead>
+      <tbody>
+        <tr><td>用生體</td><td>外力在幫你，得到支持</td><td>較順</td></tr>
+        <tr><td>體剋用</td><td>你能掌握局面，但要花力氣</td><td>可成，費力</td></tr>
+        <tr><td>比和</td><td>雙方同類，彼此相安</td><td>平穩</td></tr>
+        <tr><td>體生用</td><td>你付出較多，容易耗損</td><td>耗力</td></tr>
+        <tr><td>用剋體</td><td>外在壓力大，阻力明顯</td><td>需謹慎</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <h3>怎麼問比較好</h3>
+    <ul class="plain">
+      <li>一次問一件事，問題寫具體。「這份工作該不該換」比「我的運勢如何」好讀得多。</li>
+      <li>有真正想不透的事再問。同一件事不要反覆重起，結果不同時反而更混亂。</li>
+      <li>同一組數字可以接著問不同的細節，用結果頁的「同一卦再問」。</li>
+      <li>把結果當成整理思緒的參考，最後的決定仍然在你。</li>
+    </ul>
+  </section>
+
+  <section>
+    <h3>名詞小辭典</h3>
+    <div>
+      <details><summary>爻</summary><p>卦中的一條線。實線是陽爻，斷線是陰爻。一個卦由六爻組成，從下往上數。</p></details>
+      <details><summary>上卦、下卦</summary><p>六爻分成上下兩組，各三爻。下面三爻是下卦（內卦），上面三爻是上卦（外卦）。</p></details>
+      <details><summary>五行</summary><p>木、火、土、金、水。每個卦都歸屬一種五行：乾兌屬金，離屬火，震巽屬木，坎屬水，艮坤屬土。</p></details>
+      <details><summary>閏月</summary><p>農曆有些年份多一個閏月。本頁直接使用該月的月份數字，不另外調整，不同流派的做法可能不同。</p></details>
+    </div>
+  </section>
+
+  <p class="note">本頁採教學用的簡化梅花易數：只做卦象、體用與五行的基本推演，沒有包含外應（起卦時看到的景物）、卦辭爻辭與應期等傳統內容。解讀供文化與語文學習參考，不是占卜結論，也不能代替醫療、法律或投資上的專業意見。</p>
+</section>
+
+<footer>梅花易數 · 教學與文化互動展示</footer>
+</div>
+
+<script>
+(function(){
+'use strict';
+var $=function(s){return document.querySelector(s)};
+var BR=['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+var MON=['正','二','三','四','五','六','七','八','九','十','冬','臘'];
+var DAY=['初一','初二','初三','初四','初五','初六','初七','初八','初九','初十','十一','十二','十三','十四','十五','十六','十七','十八','十九','二十','廿一','廿二','廿三','廿四','廿五','廿六','廿七','廿八','廿九','三十'];
+var TRI=[null,
+ {n:'乾',x:'天',e:'金',l:[1,1,1],t:'剛健、主動、領導'},
+ {n:'兌',x:'澤',e:'金',l:[1,1,0],t:'喜悅、溝通、口舌'},
+ {n:'離',x:'火',e:'火',l:[1,0,1],t:'光明、依附、文書'},
+ {n:'震',x:'雷',e:'木',l:[1,0,0],t:'震動、起步、突發'},
+ {n:'巽',x:'風',e:'木',l:[0,1,1],t:'滲透、順從、反覆'},
+ {n:'坎',x:'水',e:'水',l:[0,1,0],t:'險陷、流動、深藏'},
+ {n:'艮',x:'山',e:'土',l:[0,0,1],t:'靜止、阻止、穩固'},
+ {n:'坤',x:'地',e:'土',l:[0,0,0],t:'柔順、承載、包容'}];
+/* rows: upper trigram 1..8, columns: lower trigram 1..8 (乾兌離震巽坎艮坤) */
+var NM=[
+ ['乾為天','天澤履','天火同人','天雷无妄','天風姤','天水訟','天山遯','天地否'],
+ ['澤天夬','兌為澤','澤火革','澤雷隨','澤風大過','澤水困','澤山咸','澤地萃'],
+ ['火天大有','火澤睽','離為火','火雷噬嗑','火風鼎','火水未濟','火山旅','火地晉'],
+ ['雷天大壯','雷澤歸妹','雷火豐','震為雷','雷風恆','雷水解','雷山小過','雷地豫'],
+ ['風天小畜','風澤中孚','風火家人','風雷益','巽為風','風水渙','風山漸','風地觀'],
+ ['水天需','水澤節','水火既濟','水雷屯','水風井','坎為水','水山蹇','水地比'],
+ ['山天大畜','山澤損','山火賁','山雷頤','山風蠱','山水蒙','艮為山','山地剝'],
+ ['地天泰','地澤臨','地火明夷','地雷復','地風升','地水師','地山謙','坤為地']];
+var KW={'乾為天':'剛健進取','坤為地':'柔順承載','水雷屯':'起步艱難','山水蒙':'啟蒙求教','水天需':'等待時機','天水訟':'爭執糾紛','地水師':'統眾行動','水地比':'親近輔佐','風天小畜':'小有積蓄','天澤履':'謹慎前行','地天泰':'通達順暢','天地否':'閉塞不通','天火同人':'同心協力','火天大有':'豐收盛大','地山謙':'謙遜得益','雷地豫':'安樂預備','澤雷隨':'順隨時勢','山風蠱':'整治積弊','地澤臨':'臨近進展','風地觀':'觀察審視','火雷噬嗑':'排除障礙','山火賁':'文飾修飾','山地剝':'剝落衰退','地雷復':'回復轉機','天雷无妄':'不妄動守真','山天大畜':'大量蓄積','山雷頤':'頤養自養','澤風大過':'負擔過重','坎為水':'重重險陷','離為火':'光明依附','澤山咸':'感應相通','雷風恆':'持之以恆','天山遯':'退避保身','雷天大壯':'強盛須節制','火地晉':'晉升前進','地火明夷':'光明受抑','風火家人':'家庭內務','火澤睽':'彼此乖違','水山蹇':'行路艱難','雷水解':'解除困局','山澤損':'減損有得','風雷益':'增益受惠','澤天夬':'決斷果決','天風姤':'不期而遇','澤地萃':'聚集匯合','地風升':'逐步上升','澤水困':'困窘受限','水風井':'養人不竭','澤火革':'變革更新','火風鼎':'鼎新穩固','震為雷':'震動警醒','艮為山':'止而不動','風山漸':'循序漸進','雷澤歸妹':'名分未正','雷火豐':'豐盛盛極','火山旅':'外出作客','巽為風':'順入滲透','兌為澤':'喜悅交流','風水渙':'離散化解','水澤節':'節制有度','風澤中孚':'誠信相感','雷山小過':'小事可為','水火既濟':'已成防衰','火水未濟':'未成待進'};
+var MV=['','初爻，事情剛開頭，根基還沒打穩','二爻，事情漸入軌道，需要穩穩累積','三爻，內外交界，容易遇到轉折或抉擇','四爻，進入外在局面，離定案不遠','五爻，位置最顯眼，成敗較為明朗','上爻，已到尾聲，局面將要轉換'];
+var SHENG={'木':'火','火':'土','土':'金','金':'水','水':'木'};
+var KE={'木':'土','土':'水','水':'火','火':'金','金':'木'};
+var REGIONS=[['本機','此裝置的時區'],['Asia/Taipei','台灣'],['Asia/Tokyo','日本東京'],['America/New_York','美國紐約']];
+var KEY='meihua-v2';
+
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function md(n,k){var r=n%k;return r===0?k:r}
+function pad(n){return n<10?'0'+n:''+n}
+function hourBranch(h){return Math.floor((h+1)/2)%12+1}
+function deviceTz(){try{return Intl.DateTimeFormat().resolvedOptions().timeZone||'UTC'}catch(e){return 'UTC'}}
+function tzOf(v){return v==='本機'?deviceTz():v}
+function regionLabel(v){
+  if(v==='本機')return '此裝置（'+deviceTz()+'）';
+  for(var i=0;i<REGIONS.length;i++)if(REGIONS[i][0]===v)return REGIONS[i][1];
+  return v;
+}
+var LT="16d28075200ea50164a5064b00a9b015564056a00b59017522075201b2560b2500a4b014ab502ad0056b00b6930da901d9270e9200d2501a4d60a56002b6015b5406d400ea901e9220e9200d266052b00a57012b650b5a006d400ec9307490169370a930052b00a5b60aad0056a01b5540ba400b4901a9320a950152d7053600aad015aa50db200da401d4930d4a00a9580a970055600ab560ad5006d200ea540ea50064a00c9730a9b0155a7056a00b690175250b5200b250164b40a4b014ab802ad0056d00b6960da900d9201d2540d2501a4da0a56002b6005b5706d500ea901e9250e9200d2600a5630a57014d68035a006d500ec950749006930152b4052b00a5b0155a2056a01b5570ba400b4901a9350a950052d00a6d40ab5015aa905d200da501d4a60e4a00c950152e4055600ab5015b2206d200ea560f250064a00c97504ab0055b00ad630b6901752b0b5200b2501a4b60a4b004ab0055b505ad00b6a01b5220d9201d2570d2500a55014ad504b6005b500daa30ec901e9280e9200d2600a5660a57004d6006d5407550074900e93306930152b7052b00a5b0155a5056a00b650174a40b4901a9580a950052d00aad60ab5005aa00ba540da500d4a01c9530c960194e7055600ab5015b2506d200ea500e4a4068b00c97804ab0055b00ad660b6a007520172540b4500a8b0149b204ab0";
+function gparts(date,tz){
+  try{
+    var p=new Intl.DateTimeFormat("en-US",{timeZone:tz,year:"numeric",month:"numeric",day:"numeric",hour:"numeric",minute:"numeric",hour12:false}).formatToParts(date);
+    var o={};
+    p.forEach(function(x){if(x.type!=="literal")o[x.type]=parseInt(x.value,10)});
+    if(o.hour===24)o.hour=0;
+    if(isNaN(o.year)||isNaN(o.month)||isNaN(o.day)||isNaN(o.hour))return null;
+    return {y:o.year,mo:o.month,d:o.day,h:o.hour,mi:o.minute||0};
+  }catch(e){
+    if(tz===deviceTz())return {y:date.getFullYear(),mo:date.getMonth()+1,d:date.getDate(),h:date.getHours(),mi:date.getMinutes()};
+    return null;
+  }
+}
+function lunar(date,tz){
+  var g=gparts(date,tz); if(!g)return null;
+  var off=Math.round((Date.UTC(g.y,g.mo-1,g.d)-Date.UTC(1900,0,31))/864e5);
+  if(off<0)return null;
+  for(var i=0;i<201;i++){
+    var n=parseInt(LT.substr(i*5,5),16), leapM=n&15, bits=n>>4, cnt=leapM?13:12, tot=0, k;
+    for(k=0;k<cnt;k++)tot+=((bits>>k)&1)?30:29;
+    if(off>=tot){off-=tot;continue}
+    for(k=0;k<cnt;k++){
+      var ml=((bits>>k)&1)?30:29;
+      if(off<ml){
+        var num,leap=false;
+        if(!leapM||k<leapM)num=k+1;else if(k===leapM){num=leapM;leap=true}else num=k;
+        var ry=1900+i;
+        return {ry:ry,m:num,d:off+1,h:g.h,leap:leap,yb:(((ry-4)%12)+12)%12+1};
+      }
+      off-=ml;
+    }
+  }
+  return null;
+}
+function clock(date,tz){
+  var g=gparts(date,tz);
+  return g?g.y+"/"+pad(g.mo)+"/"+pad(g.d)+" "+pad(g.h)+":"+pad(g.mi):date.toString();
+}
+function timeCast(date,tz){
+  var L=lunar(date,tz); if(!L)return null;
+  var hb=hourBranch(L.h), a=L.yb+L.m+L.d, b=a+hb;
+  return {upper:md(a,8),lower:md(b,8),moving:md(b,6),
+    info:{clock:clock(date,tz),lunar:(L.leap?'閏':'')+MON[L.m-1]+'月'+DAY[L.d-1],yb:L.yb,m:L.m,d:L.d,hb:hb,a:a,b:b}};
+}
+function explain(now,v){
+  var tz0=tzOf(v), k0=timeCast(now,tz0), out=[];
+  if(!k0)return out;
+  REGIONS.forEach(function(r){
+    if(r[0]==='本機'||r[0]===tz0)return;
+    var k=timeCast(now,r[0]); if(!k)return;
+    var same=k.upper===k0.upper&&k.lower===k0.lower&&k.moving===k0.moving;
+    var sd=k.info.lunar===k0.info.lunar, sh=k.info.hb===k0.info.hb;
+    if(same){
+      out.push(sd&&sh
+        ?'與'+r[1]+'的卦相同：兩地的農曆日期都是'+k.info.lunar+'，時辰都是'+BR[k.info.hb-1]+'時。一個時辰有兩小時，時鐘差一小時仍可能落在同一個時辰，算式用到的數字就一樣。'
+        :'與'+r[1]+'的卦剛好相同：兩地的日期或時辰其實不同，但算出來的三個餘數碰巧一致。');
+    }else{
+      var why=[];
+      if(!sd)why.push('農曆日期不同（'+k0.info.lunar+'與'+k.info.lunar+'）');
+      if(!sh)why.push('時辰不同（'+BR[k0.info.hb-1]+'時與'+BR[k.info.hb-1]+'時）');
+      if(!why.length)why.push('農曆年不同');
+      out.push('與'+r[1]+'的卦不同：'+why.join('，')+'，所以算式的結果不一樣。');
+    }
+  });
+  return out;
+}
+function triIdx(a){for(var i=1;i<=8;i++){var l=TRI[i].l;if(l[0]===a[0]&&l[1]===a[1]&&l[2]===a[2])return i}return 1}
+function build(c){
+  var lines=TRI[c.lower].l.concat(TRI[c.upper].l);
+  var ch=lines.slice(); ch[c.moving-1]=ch[c.moving-1]?0:1;
+  var hl=triIdx([lines[1],lines[2],lines[3]]), hu=triIdx([lines[2],lines[3],lines[4]]);
+  var cl=triIdx(ch.slice(0,3)), cu=triIdx(ch.slice(3));
+  return {lines:lines,ch:ch,hu:hu,hl:hl,cu:cu,cl:cl,
+    ben:NM[c.upper-1][c.lower-1],hu_:NM[hu-1][hl-1],bian:NM[cu-1][cl-1]};
+}
+function rel(ti,o){
+  if(ti===o)return {k:'比和',s:1,c:'good',t:'雙方同類，彼此相安，局面平穩。'};
+  if(SHENG[o]===ti)return {k:'用生體',s:2,c:'good',t:'外在力量在幫你，容易得到支持。'};
+  if(SHENG[ti]===o)return {k:'體生用',s:-1,c:'mid',t:'你付出得多，容易耗損，要留意體力與資源。'};
+  if(KE[ti]===o)return {k:'體剋用',s:1,c:'mid',t:'你能掌握局面，但需要花力氣去推動。'};
+  return {k:'用剋體',s:-2,c:'bad',t:'外在壓力較大，阻力明顯，宜放慢並做好準備。'};
+}
+function hexHTML(lines,mv,mini){
+  var h='<div class="hex'+(mini?' mini':'')+'" aria-hidden="true">';
+  for(var i=5;i>=0;i--){
+    var on=(mv&&mv===i+1);
+    h+='<div class="ln '+(lines[i]?'yang':'yin')+(on?' mv':'')+'">'+(lines[i]?'<i></i>':'<i></i><i></i>')+'</div>';
+  }
+  return h+'</div>';
+}
+function verdictOf(t){
+  if(t>=3)return ['整體偏順','從現況到結果，助力多於阻力。可以積極推進，但細節仍要做好。'];
+  if(t>=1)return ['可行，需要用力','方向大致是通的，不過要自己多付出一些，不會憑空順利。'];
+  if(t>=-1)return ['平穩，多看多等','好壞參半，沒有明顯的推力或阻力。先蒐集資訊，不必急著下決定。'];
+  if(t>=-3)return ['阻力偏多，放慢腳步','外在條件對你不太友善。縮小目標、分段進行，會比硬衝穩當。'];
+  return ['先守後攻','壓力與耗損都偏大。先保存實力，等條件改善再行動。'];
+}
+function analyze(c){
+  var B=build(c), low=c.moving<=3;
+  var tiN=low?c.upper:c.lower, yoN=low?c.lower:c.upper;
+  var ti=TRI[tiN], yo=TRI[yoN];
+  var r1=rel(ti.e,yo.e);
+  var huA=rel(ti.e,TRI[B.hu].e), huB=rel(ti.e,TRI[B.hl].e);
+  var cyN=low?B.cl:B.cu, r3=rel(ti.e,TRI[cyN].e);
+  var total=r1.s+(huA.s+huB.s)/2+r3.s;
+  return {B:B,low:low,ti:ti,yo:yo,tiN:tiN,yoN:yoN,r1:r1,huA:huA,huB:huB,cy:TRI[cyN],r3:r3,total:total,v:verdictOf(total)};
+}
+function relTag(r){return '<span class="rel '+r.c+'">'+r.k+'</span>'}
+function guaCard(tag,name,lines,mv,desc){
+  return '<div class="gua"><span class="tag">'+tag+'</span><div class="hexwrap">'+hexHTML(lines,mv)+'</div><h3>'+name+'</h3><p class="kw">'+desc+'</p></div>';
+}
+function renderResult(rec,qi){
+  var c=rec.cast, A=analyze(c), B=A.B, q=rec.qs[qi]?rec.qs[qi].q:'';
+  var side=A.low?'下':'上', tside=A.low?'上':'下';
+  var html='';
+  html+='<div><p class="qline">'+(q?'「'+esc(q)+'」':'未寫問題')+'</p><p class="meta">'+esc(rec.when)+'</p></div>';
+  var dlt=A.r3.s-A.r1.s;
+  var trend=dlt>0?'走勢：愈走愈順，後段比前段容易。':(dlt<0?'走勢：前段較順，後段阻力增加，要提早準備。':'走勢：前後差異不大，節奏平穩。');
+  html+='<div class="verdict"><h3>'+A.v[0]+'</h3><p class="meta">《'+esc(B.ben)+'》轉為《'+esc(B.bian)+'》，動爻第 '+c.moving+' 爻</p><p>'+A.v[1]+'</p><p>現況是'+A.r1.k+'：'+A.r1.t+'</p><p>結果是'+A.r3.k+'：'+A.r3.t+'</p><p>'+trend+'</p></div>';
+  html+='<div class="trio">'
+    +guaCard('本卦 · 現況',B.ben,B.lines,c.moving,'上'+TRI[c.upper].n+'（'+TRI[c.upper].x+'）下'+TRI[c.lower].n+'（'+TRI[c.lower].x+'）<br>'+(KW[B.ben]||''))
+    +guaCard('互卦 · 過程',B.hu_,TRI[B.hl].l.concat(TRI[B.hu].l),0,'上'+TRI[B.hu].n+'下'+TRI[B.hl].n+'<br>'+(KW[B.hu_]||''))
+    +guaCard('變卦 · 結果',B.bian,B.ch,0,'上'+TRI[B.cu].n+'下'+TRI[B.cl].n+'<br>'+(KW[B.bian]||''))
+    +'</div>';
+  html+='<div class="sect"><h3>動爻</h3><p>動爻在第 '+c.moving+' 爻（'+MV[c.moving]+'）。</p></div>';
+  html+='<div class="sect"><h3>體與用</h3><p>動爻落在'+side+'卦，所以'+side+'卦'+A.yo.n+'（'+A.yo.x+'，屬'+A.yo.e+'）是<b>用</b>，代表事情或對方；'+tside+'卦'+A.ti.n+'（'+A.ti.x+'，屬'+A.ti.e+'）是<b>體</b>，代表你自己。</p><p>'+relTag(A.r1)+' '+A.r1.t+'</p></div>';
+  html+='<div class="sect"><h3>現況：'+B.ben+'</h3><p>'+(KW[B.ben]?'這個卦的主題是「'+KW[B.ben]+'」。':'')+'上卦'+TRI[c.upper].n+'的性質是'+TRI[c.upper].t+'，下卦'+TRI[c.lower].n+'的性質是'+TRI[c.lower].t+'。事情目前的氣氛，可以從這兩種性質的搭配去體會。</p></div>';
+  html+='<div class="sect"><h3>過程：'+B.hu_+'</h3><p>互卦的上卦'+TRI[B.hu].n+'與你（體）的關係是 '+relTag(A.huA)+'，下卦'+TRI[B.hl].n+'與你的關係是 '+relTag(A.huB)+'。'+(KW[B.hu_]?'這段過程的主題是「'+KW[B.hu_]+'」。':'')+'</p></div>';
+  html+='<div class="sect"><h3>結果：'+B.bian+'</h3><p>變卦中，'+side+'側變成'+A.cy.n+'（'+A.cy.x+'，屬'+A.cy.e+'），和你的關係是 '+relTag(A.r3)+'。'+A.r3.t+(KW[B.bian]?'結果的主題是「'+KW[B.bian]+'」。':'')+'</p></div>';
+  if(rec.note&&rec.note.length){
+    html+='<div class="note"><b>為什麼各地的結果可能相同或不同</b><ul class="plain">'+rec.note.map(function(t){return '<li>'+esc(t)+'</li>'}).join('')+'</ul></div>';
+  }
+  html+='<p class="note">以上是依簡化的梅花易數規則整理的白話參考，用來幫你整理思緒，不是替你做決定。重要的事，請以實際情況和專業意見為準。</p>';
+  html+='<form class="again" id="againForm"><input id="fq" type="text" maxlength="120" placeholder="同一卦再問另一件事" aria-label="同一卦再問另一件事"><button class="btn ghost small" type="submit">同一卦再問</button></form>';
+  html+='<div class="actions"><button type="button" class="btn ghost small" id="copyBtn">複製結果文字</button><span class="hint" id="copyMsg"></span></div>';
+  $('#resultBody').className='';
+  $('#resultBody').innerHTML=html;
+  current={rec:rec,qi:qi};
+  $('#againForm').addEventListener('submit',function(e){
+    e.preventDefault();
+    var v=$('#fq').value.trim(); if(!v){$('#fq').focus();return}
+    rec.qs.push({q:v}); save(); renderHist(); renderResult(rec,rec.qs.length-1);
+  });
+  $('#copyBtn').addEventListener('click',function(){copyText(plain(rec,qi,A))});
+}
+function plain(rec,qi,A){
+  var B=A.B,c=rec.cast;
+  return ['梅花易數',
+    '問題：'+(rec.qs[qi]?rec.qs[qi].q:''),
+    '時間：'+rec.when,
+    '本卦：'+B.ben+'（動爻第'+c.moving+'爻）',
+    '互卦：'+B.hu_,
+    '變卦：'+B.bian,
+    '體用：'+A.ti.n+'（體，'+A.ti.e+'）與'+A.yo.n+'（用，'+A.yo.e+'），'+A.r1.k,
+    '整體：'+A.v[0]+'。'+A.v[1],
+    '（教學用簡化版，僅供參考）'].join('\n');
+}
+function copyText(t){
+  var done=function(){$('#copyMsg').textContent='已複製'};
+  var fallback=function(){
+    var box=document.createElement('textarea');box.className='copybox';box.value=t;box.readOnly=true;
+    $('#copyMsg').textContent='請手動複製下方文字';
+    $('#copyMsg').parentNode.after(box);box.focus();box.select();
+  };
+  try{
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done,fallback)}else{fallback()}
+  }catch(e){fallback()}
+}
+
+/* state */
+var mode='time', current=null, hearts=[7,18,29], store=[];
+function load(){try{var s=localStorage.getItem(KEY);store=s?JSON.parse(s):[];if(!Array.isArray(store))store=[]}catch(e){store=[]}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(store.slice(0,20)))}catch(e){}}
+function renderHist(){
+  var ul=$('#histList');
+  if(!store.length){ul.innerHTML='<li><span class="hint">還沒有紀錄。起一卦之後，問題與卦名會出現在這裡。</span></li>';$('#histClear').hidden=true;return}
+  $('#histClear').hidden=false;
+  ul.innerHTML=store.map(function(r,i){
+    var last=r.qs[r.qs.length-1]; var B=build(r.cast);
+    return '<li><button type="button" class="open" data-i="'+i+'"><strong>'+esc(last.q||'未寫問題')+(r.qs.length>1?'（共 '+r.qs.length+' 問）':'')+'</strong><span>'+esc(B.ben)+' → '+esc(B.bian)+' · '+esc(r.when)+'</span></button><button type="button" class="del" data-d="'+i+'" aria-label="刪除這筆紀錄">刪除</button></li>';
+  }).join('');
+}
+function whenText(info,label,m){
+  if(m==='time')return label+' '+info.clock+'，農曆'+info.lunar+'，'+BR[info.hb-1]+'時';
+  return (m==='heart'?'心想取數':'自己填數')+' · '+label+' '+info.clock;
+}
+
+/* time panel */
+function renderTime(){
+  var v=$('#tz').value, tz=tzOf(v), now=new Date(), c=timeCast(now,tz);
+  if(!c){
+    $('#facts').innerHTML='';
+    $('#calc').textContent='這個瀏覽器無法換算農曆，請改用「心想取數」或「自己填數字」。';
+    return;
+  }
+  var i=c.info;
+  $('#facts').innerHTML=
+    '<div class="fact"><small>'+esc(regionLabel(v))+'</small><strong>'+esc(i.clock)+'</strong></div>'
+   +'<div class="fact"><small>農曆</small><strong>'+esc(i.lunar)+'</strong></div>'
+   +'<div class="fact"><small>時辰</small><strong>'+BR[i.hb-1]+'時（'+i.hb+'）</strong></div>';
+  $('#calc').innerHTML='年支（'+BR[i.yb-1]+'）<b>'+i.yb+'</b>＋月 <b>'+i.m+'</b>＋日 <b>'+i.d+'</b>＝<b>'+i.a+'</b>，加時辰 <b>'+i.hb+'</b>＝<b>'+i.b+'</b><br>上卦 '+TRI[c.upper].n+'（'+i.a+'÷8），下卦 '+TRI[c.lower].n+'（'+i.b+'÷8），動爻第 '+c.moving+' 爻（'+i.b+'÷6）';
+  var rows='<thead><tr><th>地區</th><th>當地時間</th><th>農曆</th><th>時辰</th><th>本卦 → 變卦</th></tr></thead><tbody>';
+  REGIONS.forEach(function(r){
+    if(r[0]==='本機')return;
+    var k=timeCast(now,r[0]); if(!k)return;
+    var b=build(k);
+    rows+='<tr><td>'+esc(r[1])+'</td><td class="num">'+esc(k.info.clock)+'</td><td>'+esc(k.info.lunar)+'</td><td>'+BR[k.info.hb-1]+'時</td><td>'+esc(b.ben)+' → '+esc(b.bian)+'（第'+k.moving+'爻）</td></tr>';
+  });
+  $('#cmpTable').innerHTML=rows+'</tbody>';
+  $('#cmpWhy').innerHTML=explain(now,v).map(function(t){return '<li>'+esc(t)+'</li>'}).join('');
+}
+function renderHeart(){
+  $('#heartFacts').innerHTML=hearts.map(function(n,k){return '<div class="fact"><small>第'+['一','二','三'][k]+'個數</small><strong>'+n+'</strong></div>'}).join('');
+}
+function setMode(m){
+  mode=m;
+  document.querySelectorAll('#seg button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.mode===m?'true':'false')});
+  $('#panelTime').hidden=m!=='time';$('#panelHeart').hidden=m!=='heart';$('#panelManual').hidden=m!=='manual';
+  $('#msg').textContent='';
+}
+function go(){
+  var q=$('#q').value.trim(), msg=$('#msg');
+  if(!q){msg.textContent='請先寫下想問的事，再起卦。';$('#q').focus();return}
+  var cast, when, v=$('#tz').value, now=new Date();
+  if(mode==='time'){
+    cast=timeCast(now,tzOf(v));
+    if(!cast){msg.textContent='這個瀏覽器無法換算農曆，請改用其他取數方式。';return}
+    when=whenText(cast.info,regionLabel(v),'time');
+  }else{
+    var n;
+    if(mode==='heart'){n=hearts.slice()}
+    else{
+      var a=parseInt($('#n1').value,10),b=parseInt($('#n2').value,10),d=parseInt($('#n3').value,10);
+      if(isNaN(a)||a<1){msg.textContent='第一個數請填 1 以上的整數。';return}
+      if(isNaN(b)||b<1)b=a;
+      if(isNaN(d)||d<1)d=a+b;
+      n=[a,b,d];
+    }
+    cast={upper:md(n[0],8),lower:md(n[1],8),moving:md(n[2],6),nums:n,info:{clock:clock(now,tzOf(v))}};
+    when=whenText(cast.info,regionLabel(v),mode)+'，數字 '+n.join('、');
+  }
+  msg.textContent='';
+  var rec={id:Date.now(),when:when,cast:{upper:cast.upper,lower:cast.lower,moving:cast.moving},qs:[{q:q}]};
+  if(mode==='time')rec.note=explain(now,v);
+  store.unshift(rec); store=store.slice(0,20); save(); renderHist();
+  renderResult(rec,0);
+  $('#result').scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});
+}
+
+/* static tables */
+function buildTables(){
+  var h='<thead><tr><th>數</th><th>卦</th><th>卦象</th><th>自然象</th><th>五行</th><th>性質</th></tr></thead><tbody>';
+  for(var i=1;i<=8;i++){var t=TRI[i];h+='<tr><td class="num">'+i+'</td><td><b>'+t.n+'</b></td><td>'+hexHTML(t.l,0,true)+'</td><td>'+t.x+'</td><td>'+t.e+'</td><td>'+t.t+'</td></tr>'}
+  $('#triTable').innerHTML=h+'</tbody>';
+  var b='<thead><tr><th>時辰</th><th>數</th><th>時間</th></tr></thead><tbody>';
+  for(var k=0;k<12;k++){var s=(k*2+23)%24,e=(s+1)%24;b+='<tr><td><b>'+BR[k]+'時</b></td><td class="num">'+(k+1)+'</td><td class="num">'+pad(s)+':00 – '+pad(e)+':59</td></tr>'}
+  $('#brTable').innerHTML=b+'</tbody>';
+}
+
+function init(){
+  $('#jsWarn').hidden=true;
+  load();
+  $('#tz').innerHTML=REGIONS.map(function(r){return '<option value="'+r[0]+'">'+esc(r[0]==='本機'?regionLabel('本機'):r[1])+'</option>'}).join('');
+  $('#chips').addEventListener('click',function(e){var b=e.target.closest('.chip');if(!b)return;$('#q').value=b.textContent;$('#q').focus()});
+  $('#seg').addEventListener('click',function(e){var b=e.target.closest('button');if(b)setMode(b.dataset.mode)});
+  $('#tz').addEventListener('change',renderTime);
+  $('#refresh').addEventListener('click',renderTime);
+  $('#heartBtn').addEventListener('click',function(){
+    hearts=[0,0,0].map(function(){return Math.floor(Math.random()*99)+1});renderHeart();
+  });
+  $('#go').addEventListener('click',go);
+  $('#histList').addEventListener('click',function(e){
+    var o=e.target.closest('.open'),d=e.target.closest('.del');
+    if(o){var r=store[+o.dataset.i];if(r){renderResult(r,r.qs.length-1);$('#result').scrollIntoView({block:'start'})}}
+    if(d){store.splice(+d.dataset.d,1);save();renderHist()}
+  });
+  $('#histClear').addEventListener('click',function(){store=[];save();renderHist()});
+  buildTables();renderTime();renderHeart();renderHist();
+  setInterval(function(){if(mode==='time')renderTime()},15000);
+}
+init();
+})();
+</script>
